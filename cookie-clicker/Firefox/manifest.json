@@ -1,21 +1,15 @@
 {
   "manifest_version": 2,
-  "name": "Browser Coockie Clicker",
+  "name": "Browser Cookie Clicker",
   "version": "0.1",
 
   "description": "Turns denying cookies into a little game, instead of a hard stop.",
-
-  "icons": {
-    "48": "icons/border-48.png"
-  },
-
   "content_scripts": [
     {
-      "matches": ["*://*.tiktok.com/*"],
-      "js": ["tiktokWrapper"]
+    "matches": ["*://*.tiktok.com/*"],
+    "js": ["./src/tiktokWrapper.ts"]
     }
   ],
   "permissions": ["activeTab"]
 
 }
-
