@@ -1,16 +1,12 @@
 function Main(){
-    console.log(SearchForEmailInput())
-    console.log(SearchForPasswordInput())
     if(SearchForLoginField()){
-        login()
+        login(<HTMLInputElement>SearchForInputField("email"), <HTMLInputElement>SearchForInputField("pass"))
     }else{
         listenForClicks()
     }
 }
 function listenForClicks() {
     let ElementPath : Element[] = []
-    let emailElement : HTMLInputElement | null = null
-    let passwordElement :HTMLInputElement | null = null
     console.log("listening for clicks:");
     document.addEventListener("click", (watchClickPath));
     function watchClickPath(clickEvent : MouseEvent){
@@ -25,42 +21,60 @@ function listenForClicks() {
         console.log("can we find the login path now?")
         if (SearchForLoginField()){
             document.removeEventListener("click", watchClickPath)
-            login()
+            login(<HTMLInputElement>SearchForInputField("email"), <HTMLInputElement>SearchForInputField("pass"))
+
         }
     }
 }
-function CreateEmail() {
-    let options = {
-        method: 'GET',
-        headers: {}
-    };
+async function fetchNewEmailAddress() {
+    console.log("fetching new email:")
+    const data = null;
 
-    fetch('/get-data', options)
-        .then(response => response.json())
-        .then(body => {
-            // Do something with body
-        });
+    const xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+
+    xhr.addEventListener('readystatechange', function () {
+        if (this.readyState === this.DONE) {
+            console.log(this.responseText);
+        }
+    });
+
+    xhr.open('GET', 'https://privatix-temp-mail-v1.p.rapidapi.com/request/mail/id/null/');
+    xhr.setRequestHeader('x-rapidapi-host', 'privatix-temp-mail-v1.p.rapidapi.com');
+
+    xhr.send(data);
 }
 function SearchForLoginField(){
-    console.log(SearchForEmailInput());
-    console.log(SearchForPasswordInput());
-    return !(SearchForEmailInput() == null || SearchForPasswordInput == null);
+    console.log(SearchForInputField("email"));
+    console.log(SearchForInputField("pass"));
+    return !(SearchForInputField("email") == null || SearchForInputField("pass") == null);
 }
-function SearchForEmailInput() : HTMLInputElement{
-    return document.querySelector('[placeholder^=Email]') as HTMLInputElement;
+
+function SearchForInputField(searchTerm: string) : HTMLInputElement| null {
+    let possibleEmailElements = document.querySelectorAll('[placeholder]');
+    for(let element in possibleEmailElements){
+        if(possibleEmailElements[element] instanceof HTMLInputElement){
+            try{
+            if(possibleEmailElements[element].placeholder.toLowerCase().match("[/W/S]*"+searchTerm.toLowerCase()+"[/W/S]*")){
+                return possibleEmailElements[element];
+            }
+            if(possibleEmailElements[element].ariaLabel != null && possibleEmailElements[element].ariaLabel.toLowerCase().match("[/W/S]*"+searchTerm.toLowerCase()+"[/W/S]*")){
+                return possibleEmailElements[element];
+            }}
+            catch (e){
+                console.log(e)
+            }
+        }
+    }
+    return null;
 }
-function SearchForPasswordInput() : HTMLInputElement{
-    return document.querySelector('[placeholder^=Pass]') as HTMLInputElement;
-}
+
 function SearchForInnerText (innerText: string): Node | null {
     var xpath = "//div[contains(text(),'" + innerText + "')]";
     return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 }
-function login(){
-    console.log("logging in:")
-    let emailElement = SearchForEmailInput();
-    let passElement = SearchForPasswordInput();
-    emailElement.value = "henlo"
-    passElement.value= "there"
+function login(emailElement:HTMLInputElement, passElement:HTMLInputElement){
+    console.log("logging in:", emailElement, passElement);
+    emailElement.value = fetchNewEmailAddress()
 }
 Main()
