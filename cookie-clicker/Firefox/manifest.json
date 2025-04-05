@@ -4,12 +4,17 @@
   "version": "0.1",
 
   "description": "Turns denying cookies into a little game, instead of a hard stop.",
+  "homepage_url": "https://github.com/CrimsonVengeance/Browser-Cookie-Clicker",
   "content_scripts": [
     {
     "matches": ["*://*.tiktok.com/*"],
-    "js": ["./src/tiktokWrapper.ts"]
+    "js": ["./src/MainExtension/browserHandler.ts"]
     }
   ],
-  "permissions": ["activeTab"]
+  "permissions": ["activeTab"],
 
+  "browser_action": {
+    "default_title": "Whereami?",
+    "default_popup": "./src/websiteEmailFinder/loginPopup.html"
+  }
 }

@@ -3,7 +3,7 @@
  * the content script in the page.
  */
 
-export function listenForClicks() {
+function listenForClicks() {
     var ElementsClickedList : Element[] = []
     console.log("listening for clicks:");
     document.addEventListener("click", (clickEvent) => {
@@ -11,10 +11,19 @@ export function listenForClicks() {
         var element = clickEvent.target as Element;
         if(element.nodeName.toLowerCase() == "input"){
             console.log("input field detected.")
+
+        }
+        if(ElementsClickedList.some(e => element.isEqualNode(e))) {
+            console.log("element already in click history.")
+            return;
         }
         ElementsClickedList.push(element)
         console.log(ElementsClickedList)
-
     });
+
+}
+
+
+function checkInputType(inputElement : Element){
 
 }

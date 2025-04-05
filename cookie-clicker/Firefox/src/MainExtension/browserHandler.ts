@@ -1,6 +1,3 @@
-import "../websiteEmailFinder/findloginpage";
-import {listenForClicks} from "../websiteEmailFinder/findloginpage";
-
 function Main(){
     console.log("Analyzing Tiktok page:");
     setCookies();
@@ -10,7 +7,6 @@ function Main(){
         setCookies();
     }
     login()
-
 }
 
 function SearchByInnerText (innerText: string): Node | null {
@@ -37,5 +33,7 @@ function setCookies(){
     }
     document.cookie = "cookie-consent={%22optional%22:false%2C%22ga%22:false%2C%22af%22:false%2C%22fbp%22:false%2C%22lip%22:false%2C%22bing%22:false%2C%22ttads%22:false%2C%22reddit%22:false%2C%22hubspot%22:false%2C%22version%22:%22v10%22}";
 }
+
+
 
 Main();
