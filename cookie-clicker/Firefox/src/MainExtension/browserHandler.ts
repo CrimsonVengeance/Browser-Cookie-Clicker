@@ -1,12 +1,14 @@
 function Main(){
     console.log("Analyzing Tiktok page:");
     setCookies();
-
-    listenForClicks();
     window.onbeforeunload = function(){
         setCookies();
     }
-    login()
+
+    window.oncontextmenu = function(e){
+        console.log("context menu opened.",e)
+    }
+    listenForClicks()
 }
 
 function SearchByInnerText (innerText: string): Node | null {
@@ -34,6 +36,41 @@ function setCookies(){
     document.cookie = "cookie-consent={%22optional%22:false%2C%22ga%22:false%2C%22af%22:false%2C%22fbp%22:false%2C%22lip%22:false%2C%22bing%22:false%2C%22ttads%22:false%2C%22reddit%22:false%2C%22hubspot%22:false%2C%22version%22:%22v10%22}";
 }
 
+let ElementPath: Element[] = [];
+
+function listenForClicks() {
+    let emailElement : HTMLInputElement = null
+    let passwordElement :HTMLInputElement = null
+    console.log("listening for clicks:");
+    document.addEventListener("click", (clickEvent) => {
+        console.log("Finding element link for:", clickEvent)
+        let element = clickEvent.target as Element;
+        if(element.nodeName.toLowerCase() == "input"){
+            console.log("input field detected.")
+            var inputEl = element as HTMLInputElement;
+            if(inputEl.placeholder.search("*email*")){
+                emailElement = inputEl;
+            }
+            if(inputEl.placeholder.search("*email*")){
+                passwordElement = inputEl;
+            }
+            return;
+        }
+        if(ElementPath.some(e => element.isEqualNode(e))) {
+            console.log("element already in click history.")
+            return;
+        }
+        ElementPath.push(element)
+
+        console.log(ElementPath)
+    });
+
+}
+
+
+function checkInputType(inputElement : Element){
+
+}
 
 
 Main();

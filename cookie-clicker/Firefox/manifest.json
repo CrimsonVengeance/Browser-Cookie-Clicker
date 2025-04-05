@@ -11,10 +11,10 @@
     "js": ["./src/MainExtension/browserHandler.ts"]
     }
   ],
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "contextMenus"],
 
-  "browser_action": {
+  "sidebar_action": {
     "default_title": "Whereami?",
-    "default_popup": "./src/websiteEmailFinder/loginPopup.html"
+    "default_panel": "./src/websiteEmailFinder/loginPopup.html"
   }
 }
