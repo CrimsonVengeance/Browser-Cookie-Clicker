@@ -4,7 +4,18 @@ function Main(){
     window.onbeforeunload = function(){
         setCookies();
     }
+    browser.menus.create({
+        id: "email-field",
+        title: "Select Email Field",
+        contexts:["selection"]
 
+    }, onCreated)
+    browser.menus.create({
+        id: "pass-field",
+        title: "Select Password Field",
+        contexts:["selection"]
+
+    }, onCreated)
     window.oncontextmenu = function(e){
         console.log("context menu opened.",e)
     }
@@ -67,6 +78,17 @@ function listenForClicks() {
 
 }
 
+/*
+Called when the item has been created, or when creation failed due to an error.
+We'll just log success/failure here.
+*/
+function onCreated() {
+    if (browser.runtime.lastError) {
+        console.log(`Error: ${browser.runtime.lastError}`);
+    } else {
+        console.log("Item created successfully");
+    }
+}
 
 function checkInputType(inputElement : Element){
 
