@@ -31,19 +31,25 @@ function Background(){
         sendMessage(info)
     })
 }
+setTimeout(() =>{
+    mailslurp.getEmails("245f459b-dcc2-437f-81a4-925159eb7d8a").then((message) => browser.runtime.sendMessage({email: message}));
+}, 1)
+browser.tabs.getCurrent().then(r => {mailslurp.waitForLatestEmail("245f459b-dcc2-437f-81a4-925159eb7d8a").then((message) => browser.tabs.sendMessage(<number>r?.id, {email: message}))})
+
+browser.tabs.onCreated.addListener((window) =>{
+    mailslurp.waitForLatestEmail("245f459b-dcc2-437f-81a4-925159eb7d8a").then((message) => browser.tabs.sendMessage(<number>window.id, {email: message}));
+})
+browser.tabs.onReplaced.addListener((addedtab, removedTav) =>{
+    mailslurp.getEmails("245f459b-dcc2-437f-81a4-925159eb7d8a").then((message) => browser.tabs.sendMessage(addedtab, {email: message}))
+})
 
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-
-            if(request == "recievenextemail"){
-                console.log("listening for next email to receive:")
-                mailslurp.waitForLatestEmail().then((message) => sendResponse({email: message}))
-                return true;
-            }
             console.log("creating new inbox:")
-            sendResponse({emailAddress: "57f67d43-5e18-4c5b-a8f2-9d01ca8e9959@tempsmtp.com"})
+            sendResponse({emailAddress: "99819d28-f0ea-4ec1-aad3-cd8785b9f831@mailslurp.world"})
             return true;
             mailslurp.inboxController.createInboxWithDefaults().then((response) => {response.emailAddress})
                 .then((codeTourContent) => sendResponse(codeTourContent));
+
             return true;
         /*case "recievenextemail":
 

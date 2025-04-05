@@ -3,13 +3,19 @@ let emailAddress : string | null = null;
 let password : string = "monsterenergy123!"
 let email : Email | null;
 function Main(){
+    browser.runtime.onMessage.addListener(handleResponse)
 listenForClicks()
+
 }
 
-function listenForClicks() {
+async function listenForClicks() {
     let ElementPath : Element[] = []
-    if(SearchForSignUpSheet() || SearchForLoginField()){
-        document.removeEventListener("click", watchClickPath);
+    let email = SearchForInputField("email");
+    if(email != null && SearchForInputField("pass") == null){
+        let temp = await getEmail()
+        if(temp != null) {
+            email.value = temp;
+        }
     }
     console.log("listening for clicks:");
     document.addEventListener("click", (watchClickPath));
@@ -27,6 +33,24 @@ function listenForClicks() {
             document.removeEventListener("click", watchClickPath);
         }
     }
+}
+async function getEmail() : Promise<string | null>{
+    if(emailAddress != null) return emailAddress;
+    let temp = await forwardRequest("createnewemail");
+    if(temp["emailAddress"] != null){
+        emailAddress = temp["emailAddress"] as string;
+        return emailAddress;
+    }
+    return null;
+}
+
+async function getNotificationEmail() : Promise<Email | null>{
+    let temp = await forwardRequest("recievenextemail");
+    if(temp["email"] != null){
+        emailAddress = temp["emailAddress"] as string;
+        return email;
+    }
+    return null;
 }
 function SearchForSignUpSheet() : boolean{
     console.log("Searching for Sign-up sheet:")
@@ -145,10 +169,15 @@ function SearchForInnerText (innerText: string): Node | null {
 }
 async function login(emailElement: HTMLInputElement, passElement: HTMLInputElement, confirmElement : HTMLButtonElement) {
     console.log("attempting to log in:", emailElement, passElement, emailAddress);
-    await forwardRequest("createnewinbox")
+    let temp = await getEmail()
+    if(temp != null) {
+        emailElement.value = temp;
+    }
     if(emailAddress == null) return;
+    console.log("entering:",emailAddress, password);
     emailElement.value = emailAddress;
     passElement.value = password;
+    confirmElement.click()
 
 }
 
@@ -174,8 +203,13 @@ async function signUp(){
     let passElement = SearchForInputField("pass");
     if(passElement != null){
         passElement.value = "";
-        passElement.value = password
+        passElement.value = "";
+        for(const passwordItem of password.toString()) {
+            setTimeout(() =>{
+                passElement.dispatchEvent(new KeyboardEvent('keydown', {key: '1'}));
+                passElement.value += passwordItem}, 1);
 
+        }
         passElement.checkValidity()
         passElement.reportValidity()
         if(passElement.form != null){
@@ -219,10 +253,10 @@ async function signUp(){
         signUp()
         return;
     }else if(confirm != null){
-        confirm.click();
+        //confirm.click();
     }
     console.log("waiting for confirmation email.")
-    temp = await forwardRequest("receievenextemail");
+    let email = await getNotificationEmail()
     if(temp["email"] != null){
         console.log("email received!")
         email = temp["email"] as Email;
