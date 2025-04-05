@@ -1,6 +1,10 @@
+import "../websiteEmailFinder/findloginpage";
+import {listenForClicks} from "../websiteEmailFinder/findloginpage";
+
 function Main(){
     console.log("Analyzing Tiktok page:");
     setCookies();
+
     listenForClicks();
     window.onbeforeunload = function(){
         setCookies();
@@ -9,29 +13,6 @@ function Main(){
 
 }
 
-/**
- * Listen for clicks on the buttons, and send the appropriate message to
- * the content script in the page.
- */
-function listenForClicks() {
-    var ElementsClickedList = []
-    console.log("listening for clicks:");
-    document.addEventListener("click", (clickEvent) => {
-        console.log("Finding element link for:", clickEvent)
-        var element = clickEvent.target as Node;
-        if(element.nodeName.toLowerCase() == "input"){
-            console.log("input field detected.")
-        }
-        ElementsClickedList.push(element)
-        console.log(ElementsClickedList)
-
-    });
-
-}
-
-function FindLoginDetails(){
-
-}
 function SearchByInnerText (innerText: string): Node | null {
     var xpath = "//div[contains(text(),'" + innerText + "')]";
     return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
@@ -43,9 +24,6 @@ function login(){
     }
     var emailLink = emailLoginButtonElement.parentElement;
     emailLink.click();
-}
-function clearBrowserCookies(){
-    console.log("browser cookie changed.")
 }
 function setCookies(){
     let currentcookies = document.cookie.split("; ");
