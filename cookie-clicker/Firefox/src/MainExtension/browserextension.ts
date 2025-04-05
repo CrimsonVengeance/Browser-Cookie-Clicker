@@ -1,12 +1,16 @@
+import MailSlurp, {Email, InboxDto} from "mailslurp-client";
+let emailAddress : string | null = null;
+let password : string = "monsterenergy123!"
+let email : Email | null;
 function Main(){
-    if(SearchForLoginField()){
-        login(<HTMLInputElement>SearchForInputField("email"), <HTMLInputElement>SearchForInputField("pass"))
-    }else{
-        listenForClicks()
-    }
+listenForClicks()
 }
+
 function listenForClicks() {
     let ElementPath : Element[] = []
+    if(SearchForSignUpSheet() || SearchForLoginField()){
+        document.removeEventListener("click", watchClickPath);
+    }
     console.log("listening for clicks:");
     document.addEventListener("click", (watchClickPath));
     function watchClickPath(clickEvent : MouseEvent){
@@ -19,48 +23,95 @@ function listenForClicks() {
         ElementPath.push(element)
         console.log("element path:", ElementPath)
         console.log("can we find the login path now?")
-        if (SearchForLoginField()){
-            document.removeEventListener("click", watchClickPath)
-            login(<HTMLInputElement>SearchForInputField("email"), <HTMLInputElement>SearchForInputField("pass"))
-
+        if(SearchForSignUpSheet() || SearchForLoginField()){
+            document.removeEventListener("click", watchClickPath);
         }
     }
 }
-async function fetchNewEmailAddress() {
-    console.log("fetching new email:")
-    const data = null;
-
-    const xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
-
-    xhr.addEventListener('readystatechange', function () {
-        if (this.readyState === this.DONE) {
-            console.log(this.responseText);
-        }
-    });
-
-    xhr.open('GET', 'https://privatix-temp-mail-v1.p.rapidapi.com/request/mail/id/null/');
-    xhr.setRequestHeader('x-rapidapi-host', 'privatix-temp-mail-v1.p.rapidapi.com');
-
-    xhr.send(data);
+function SearchForSignUpSheet() : boolean{
+    console.log("Searching for Sign-up sheet:")
+    let confirm = SearchForButton("sign")
+    console.log(confirm);
+    if(confirm != null){
+        signUp()
+        return true;
+    }else{
+        return false;
+    }
 }
 function SearchForLoginField(){
-    console.log(SearchForInputField("email"));
-    console.log(SearchForInputField("pass"));
-    return !(SearchForInputField("email") == null || SearchForInputField("pass") == null);
+    console.log("Searching for login page:")
+    let email = SearchForInputField("email");
+    let pass = SearchForInputField("pass");
+    let confirm = SearchForButton("log");
+    console.log(email, pass, confirm);
+    if (email != null && pass != null && confirm != null){
+        login(email, pass, confirm);
+        return true;
+    }else{
+        return false;
+    }
 }
+function SearchForButton(searchTerm: string) : HTMLButtonElement | null{
+    let possibleButtonElements = document.getElementsByTagName("button");
+    for (let i in possibleButtonElements){
+        if(possibleButtonElements[i] instanceof HTMLButtonElement) {
+            if (possibleButtonElements[i].id != null && possibleButtonElements[i].id.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")) {
+                return possibleButtonElements[i]
+            }
+            if (possibleButtonElements[i].title != null && possibleButtonElements[i].title.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")) {
+                return possibleButtonElements[i]
+            }
+            if (possibleButtonElements[i].ariaLabel != null && possibleButtonElements[i].ariaLabel.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")) {
+                return possibleButtonElements[i]
+            }
+            if (possibleButtonElements[i].name != null && possibleButtonElements[i].name.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")) {
+                return possibleButtonElements[i]
+            }
+            if (possibleButtonElements[i].innerText != null && possibleButtonElements[i].innerText.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")) {
+                return possibleButtonElements[i]
+            }
+        }
+    }
+    return null;
+}
+function SearchForSelectorField(searchTerm: string) : HTMLSelectElement | null{
+    let possibleSelectorElements = document.getElementsByTagName("select");
+    for (let i in possibleSelectorElements){
+        if(possibleSelectorElements[i].id != null && possibleSelectorElements[i].id.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")){
+            return possibleSelectorElements[i]
+        }
+        if(possibleSelectorElements[i].title != null && possibleSelectorElements[i].title.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")){
+            return possibleSelectorElements[i]
+        }
+        if(possibleSelectorElements[i].ariaLabel != null && possibleSelectorElements[i].ariaLabel.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")){
+            return possibleSelectorElements[i]
+        }
+        if(possibleSelectorElements[i].name != null && possibleSelectorElements[i].name.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")){
+            return possibleSelectorElements[i]
+        }
 
+    }
+    return null;
+}
 function SearchForInputField(searchTerm: string) : HTMLInputElement| null {
-    let possibleEmailElements = document.querySelectorAll('[placeholder]');
+    let possibleEmailElements = document.getElementsByTagName("input");
     for(let element in possibleEmailElements){
         if(possibleEmailElements[element] instanceof HTMLInputElement){
-            try{
-            if(possibleEmailElements[element].placeholder.toLowerCase().match("[/W/S]*"+searchTerm.toLowerCase()+"[/W/S]*")){
-                return possibleEmailElements[element];
+            try {
+                if (possibleEmailElements[element].placeholder.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")) {
+                    return possibleEmailElements[element];
+                }
+                if (possibleEmailElements[element].ariaLabel != null && possibleEmailElements[element].ariaLabel.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")) {
+                    return possibleEmailElements[element];
+                }
+                if (possibleEmailElements[element].previousSibling != null && possibleEmailElements[element].previousSibling.textContent != null && possibleEmailElements[element].previousSibling.textContent.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")) {
+                    return possibleEmailElements[element];
+                }
+                if (possibleEmailElements[element].id != null && possibleEmailElements[element].id.toLowerCase().match("[/W/S]*" + searchTerm.toLowerCase() + "[/W/S]*")) {
+                    return possibleEmailElements[element];
+                }
             }
-            if(possibleEmailElements[element].ariaLabel != null && possibleEmailElements[element].ariaLabel.toLowerCase().match("[/W/S]*"+searchTerm.toLowerCase()+"[/W/S]*")){
-                return possibleEmailElements[element];
-            }}
             catch (e){
                 console.log(e)
             }
@@ -68,13 +119,114 @@ function SearchForInputField(searchTerm: string) : HTMLInputElement| null {
     }
     return null;
 }
+function forwardRequest(message:string) {
+    return new Promise<Record<string, any>>((resolve, reject)=> {
+        browser.runtime.sendMessage(message, (response: Record<string, any>) => {
+            if (!response) return reject(browser.runtime.lastError)
+            return resolve(response)
+        })
+    })
+}
 
+
+function handleResponse(message : Record<string, unknown>){
+    if (message["emailAddress"] != null){
+        console.log("EMAIL");
+        emailAddress = message["emailAddress"] as string;
+    }else if(message["email"]){
+        console.log("THE BEACONS OF GONDOR ARE LIT");
+        email = message["email"] as Email;
+    }
+    console.log(message)
+}
 function SearchForInnerText (innerText: string): Node | null {
     var xpath = "//div[contains(text(),'" + innerText + "')]";
     return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 }
-function login(emailElement:HTMLInputElement, passElement:HTMLInputElement){
-    console.log("logging in:", emailElement, passElement);
-    emailElement.value = fetchNewEmailAddress()
+async function login(emailElement: HTMLInputElement, passElement: HTMLInputElement, confirmElement : HTMLButtonElement) {
+    console.log("attempting to log in:", emailElement, passElement, emailAddress);
+    await forwardRequest("createnewinbox")
+    if(emailAddress == null) return;
+    emailElement.value = emailAddress;
+    passElement.value = password;
+
+}
+
+async function signUp(){
+    console.log("Attempting to sign up:")
+    let temp = await forwardRequest("createnewinbox");
+    if(temp["emailAddress"] != null){
+        emailAddress = temp["emailAddress"];
+    }
+    if(emailAddress == null){
+        console.log("email was null.");
+        return;
+    }
+    console.log("okay, on to the signup")
+    let emailElement = SearchForInputField("email");
+    if(emailElement != null){
+        emailElement.value = emailAddress;
+    }
+    let usernameElement = SearchForInputField("username");
+    if(usernameElement != null && emailElement == null){
+        usernameElement.value = "Tchallakojumbo"
+    }
+    let passElement = SearchForInputField("pass");
+    if(passElement != null){
+        passElement.value = "";
+        passElement.value = password
+
+        passElement.checkValidity()
+        passElement.reportValidity()
+        if(passElement.form != null){
+            passElement.form.checkValidity()
+            passElement.form.reportValidity()
+            }
+        var keydownEvent = new KeyboardEvent("space")
+        passElement.dispatchEvent(keydownEvent)
+        var pasteEvent = new ClipboardEvent('paste')
+        passElement.dispatchEvent(pasteEvent)
+    }
+    let firstNameElement = SearchForInputField("first");
+    if(firstNameElement != null){
+        firstNameElement.value = "Mark";
+    }
+    let lastNameElement = SearchForInputField("last");
+    if(lastNameElement != null){
+        lastNameElement.value = "Hamill"
+    }
+    let month = SearchForSelectorField("Month")
+    if(month != null){
+
+    }
+    let day = SearchForSelectorField("Day")
+    if (day != null){
+
+    }
+    let birthday_year = SearchForSelectorField("Year")
+    if(birthday_year != null){
+        birthday_year.value = (parseInt(birthday_year.value) - 21).toString();
+    }
+    let sex = SearchForInputField("male")
+
+    if(sex != null){
+        console.log("sex field seen, selecting sex:", sex.value)
+        sex.click()
+    }
+    let confirm = SearchForButton("sign");
+    if(confirm != null && password == null){
+        confirm.click()
+        signUp()
+        return;
+    }else if(confirm != null){
+        confirm.click();
+    }
+    console.log("waiting for confirmation email.")
+    temp = await forwardRequest("receievenextemail");
+    if(temp["email"] != null){
+        console.log("email received!")
+        email = temp["email"] as Email;
+    }
+    console.log(email)
 }
 Main()

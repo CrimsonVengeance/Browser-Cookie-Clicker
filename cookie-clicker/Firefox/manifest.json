@@ -16,7 +16,7 @@
       "js": ["./dist/browserextension.js"]
     }
   ],
-  "permissions": ["contextMenus", "activeTab"],
+  "permissions": ["contextMenus", "activeTab", "webRequest"],
   "browser_action": {
     "default_title": "Whereami?",
     "default_popup": "src/websiteEmailFinder/loginPopup.html"
