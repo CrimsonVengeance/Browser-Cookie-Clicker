@@ -31,21 +31,16 @@ function Background(){
         sendMessage(info)
     })
 }
-setTimeout(() =>{
-    mailslurp.getEmails("245f459b-dcc2-437f-81a4-925159eb7d8a").then((message) => browser.runtime.sendMessage({email: message}));
-}, 1)
-browser.tabs.getCurrent().then(r => {mailslurp.waitForLatestEmail("245f459b-dcc2-437f-81a4-925159eb7d8a").then((message) => browser.tabs.sendMessage(<number>r?.id, {email: message}))})
-
 browser.tabs.onCreated.addListener((window) =>{
-    mailslurp.waitForLatestEmail("245f459b-dcc2-437f-81a4-925159eb7d8a").then((message) => browser.tabs.sendMessage(<number>window.id, {email: message}));
+    mailslurp.waitForLatestEmail("0dca20ba-a779-477f-ab92-8270b783c5ff").then((message) => browser.tabs.sendMessage(<number>window.id, {email: message}));
 })
 browser.tabs.onReplaced.addListener((addedtab, removedTav) =>{
-    mailslurp.getEmails("245f459b-dcc2-437f-81a4-925159eb7d8a").then((message) => browser.tabs.sendMessage(addedtab, {email: message}))
+    mailslurp.getEmails("0dca20ba-a779-477f-ab92-8270b783c5ff").then((message) => browser.tabs.sendMessage(addedtab, {email: message}))
 })
 
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             console.log("creating new inbox:")
-            sendResponse({emailAddress: "99819d28-f0ea-4ec1-aad3-cd8785b9f831@mailslurp.world"})
+            sendResponse({emailAddress: "7d565286-3515-484c-8e5c-116c1ab2f119@mailslurp.xyz"})
             return true;
             mailslurp.inboxController.createInboxWithDefaults().then((response) => {response.emailAddress})
                 .then((codeTourContent) => sendResponse(codeTourContent));

@@ -29,7 +29,7 @@ async function listenForClicks() {
         ElementPath.push(element)
         console.log("element path:", ElementPath)
         console.log("can we find the login path now?")
-        if(SearchForSignUpSheet() || SearchForLoginField()){
+        if(SearchForSignUpSheet()){
             document.removeEventListener("click", watchClickPath);
         }
     }
@@ -223,11 +223,11 @@ async function signUp(){
     }
     let firstNameElement = SearchForInputField("first");
     if(firstNameElement != null){
-        firstNameElement.value = "Mark";
+        firstNameElement.value = "Anakin";
     }
     let lastNameElement = SearchForInputField("last");
     if(lastNameElement != null){
-        lastNameElement.value = "Hamill"
+        lastNameElement.value = "Starwalker"
     }
     let month = SearchForSelectorField("Month")
     if(month != null){
@@ -253,7 +253,7 @@ async function signUp(){
         signUp()
         return;
     }else if(confirm != null){
-        //confirm.click();
+        confirm.click();
     }
     console.log("waiting for confirmation email.")
     let email = await getNotificationEmail()
